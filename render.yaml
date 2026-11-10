@@ -1,0 +1,37 @@
+# Paid single-instance service. Review the displayed cost before creating it.
+services:
+  - type: web
+    name: adnan-portfolio
+    runtime: node
+    plan: 0.5c-512mb
+    region: frankfurt
+    branch: main
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm run deploy:start
+    healthCheckPath: /api/health
+    autoDeployTrigger: checksPass
+    disk:
+      name: portfolio-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 24
+      - key: DATABASE_URL
+        value: file:/var/data/portfolio.db
+      - key: PORTFOLIO_DATA_DIR
+        value: /var/data
+      - key: UPLOAD_DIR
+        value: /var/data/uploads
+      - key: ADMIN_EMAIL
+        value: aali15262@gmail.com
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SITE_INDEXABLE
+        value: 'true'
+      - key: MAX_FILE_SIZE
+        value: '50000000'

@@ -1,0 +1,76 @@
+# Dependencies and package-manager caches
+/node_modules/
+/.pnp
+.pnp.*
+/.yarn/*
+!/.yarn/patches/
+!/.yarn/plugins/
+!/.yarn/releases/
+!/.yarn/versions/
+
+# Build products, generated declarations, and test output
+/.next/
+/out/
+/build/
+/dist/
+/coverage/
+/test-results/
+/playwright-report/
+*.tsbuildinfo
+/next-env.d.ts
+
+# Secrets: commit the documented template, never real environment values
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*credentials*
+*PRIVATE*
+
+# Local CMS state and uploads; public/portfolio is intentional versioned content
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.sqlite-*
+*.sqlite3-*
+/public/uploads/*
+!/public/uploads/.gitkeep
+/prisma/*backup*.json
+
+# Local archives, recordings, screenshots, browser profiles, and Python tooling
+/.local-archive/
+/.chrome-temp/
+/.venv/
+/venv/
+__pycache__/
+*.pyc
+/baseline*/
+/backup*/
+/reference*/
+/ref_*/
+/extracted_frames/
+/new-reference-frames/
+/oct29_reference_frames/
+/defect_evidence/
+/build-audit-*/
+/*.png
+/*.jpg
+/*.jpeg
+/*.webp
+/*.mp4
+/*.log
+
+# Local editor, OS, and hosting-provider state
+/.idea/
+/.vscode/
+/.vercel/
+/.netlify/
+.DS_Store
+Thumbs.db
+Desktop.ini
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*

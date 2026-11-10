@@ -1,0 +1,160 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  id               String           @id @default(cuid())
+  title            String
+  slug             String           @unique
+  subtitle         String?
+  shortDescription String?
+  fullDescription  String?
+  challenge        String?
+  concept          String?
+  process          String?
+  execution        String?
+  outcome          String?
+  client           String?
+  year             String?
+  myRole           String?
+  tools            String?          // JSON array of tools
+  tags             String?          // JSON array of tags
+  thumbnailUrl     String?
+  featuredImageUrl String?
+  heroImageUrl     String?
+  heroVideoUrl     String?
+  mobileImageUrl   String?
+  mobileVideoUrl   String?
+  accentColor      String?
+  featured         Boolean          @default(false)
+  published        Boolean          @default(false)
+  order            Int              @default(0)
+  externalUrl      String?
+  behanceUrl       String?
+  githubUrl        String?
+  videoUrl         String?
+  seoTitle         String?
+  seoDescription   String?
+  ogImageUrl       String?
+  categoryId       String?
+  category         Category?        @relation(fields: [categoryId], references: [id])
+  gallery          ProjectMedia[]
+  sections         ProjectSection[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  color     String?
+  order     Int       @default(0)
+  projects  Project[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model ProjectMedia {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  url         String
+  type        String   // image, video, document
+  alt         String?
+  caption     String?
+  order       Int      @default(0)
+  width       Int?
+  height      Int?
+  mimeType    String?
+  filename    String?
+  createdAt   DateTime @default(now())
+}
+
+model ProjectSection {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title     String
+  content   String
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MediaAsset {
+  id          String   @id @default(cuid())
+  filename    String
+  originalName String
+  url         String
+  type        String   // image, video, document
+  mimeType    String
+  size        Int
+  width       Int?
+  height      Int?
+  alt         String?
+  folder      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PageContent {
+  id        String   @id @default(cuid())
+  page      String   // home, about, contact
+  section   String   // hero, intro, etc.
+  key       String
+  value     String
+  type      String   @default("text") // text, html, image, json
+  updatedAt DateTime @updatedAt
+
+  @@unique([page, section, key])
+}
+
+model SiteSettings {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  type      String   @default("text")
+  updatedAt DateTime @updatedAt
+}
+
+model SocialLink {
+  id        String   @id @default(cuid())
+  platform  String
+  url       String
+  label     String?
+  icon      String?
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ContactSubmission {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String?
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

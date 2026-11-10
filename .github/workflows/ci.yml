@@ -1,0 +1,28 @@
+name: Validate portfolio
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: file:./ci.db
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      SITE_INDEXABLE: 'false'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run db:push
+      - run: npm run check
+      - run: npm run build
+      - run: npm audit --omit=dev --audit-level=high
+      - run: npm run test:deployment
