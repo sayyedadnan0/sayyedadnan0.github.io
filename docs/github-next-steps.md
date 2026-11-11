@@ -1,22 +1,20 @@
-# GitHub checkpoint and next steps
+# GitHub website: completed setup
 
-The website source, CMS source, public portfolio catalog, chosen portrait, resume, artwork, database schemas, migrations, and verification commands are saved in this repository. Private passwords, local databases, messages, runtime uploads, dependencies, and generated builds are intentionally excluded.
+Website: https://sayyedadnan0.github.io/
+Content manager: https://sayyedadnan0.github.io/admin/
+Source: https://github.com/sayyedadnan0/sayyedadnan0.github.io
 
-## Current state
+The repository is public, GitHub Pages is enabled, and the public build reads versioned portfolio content without an online database. Netlify and Supabase are not required for this deployment. The original server-backed CMS remains in the repository for local/alternative server use.
 
-- The public catalog in prisma/data/portfolio.json contains the initial 19 published projects and public site settings. Intentional media lives in public/portfolio.
-- The existing CMS still writes to a database. It has NOT been converted into a Git-based CMS. Editing the local CMS does not automatically update the versioned catalog.
-- The source has passed code checks, production builds, and isolated SQLite/PostgreSQL persistence checks.
-- The website has not been published. No paid hosting resources were created.
-- Netlify/Supabase configuration remains an optional implementation in the source. Account setup and deployment are paused at the owner's request.
+## Edit and publish
 
-## Next work for a GitHub-based site
+1. Open the website's content manager and follow Edit projects and page text.
+2. Sign in to your GitHub account. Edit prisma/data/portfolio.json and commit your changes.
+3. Upload new public media into public/portfolio and reference it as /portfolio/filename.webp.
+4. Wait for the Publish GitHub Pages workflow to succeed, then refresh the website.
 
-1. Make versioned content files the authoritative source for projects, page text, settings, and media. Export only approved public content from the existing local database; preserve private state locally.
-2. Replace database-backed public reads with shared content readers, and provide a Git-based editing workflow. Initially, GitHub's file editor can edit content and upload media without another CMS account. A visual editor would require a separately configured secure GitHub authorization flow.
-3. Convert the public Next.js site to static output while preserving the homepage's client-side Three.js interaction, project pages, About, and Contact. The current API routes, database-backed admin pages, and server-side contact inbox cannot run on GitHub Pages.
-4. Use email/contact links for enquiries unless a separate form backend is chosen. Do not imply a static site saves messages to the existing CMS inbox.
-5. Add a GitHub Actions build-and-publish workflow, validate every public route and media path, and enable GitHub Pages. Content commits will then trigger a rebuild.
-6. Review repository visibility before publishing. GitHub Pages on GitHub Free requires a public repository. This repository is currently private; do not make it public without the owner's explicit approval.
+See [the editing guide](github-content-guide.md) for fields, rollback, and media instructions. This content manager uses GitHub's file editor, not the old visual database editor. There is no separate CMS password.
 
-A GitHub checkpoint is a backup of versioned files, not a running online CMS. The Git-based conversion and static publishing work above remain to be implemented. Existing deployment notes describe the alternative server-backed setup, not a completed Git-based CMS.
+The contact form opens an email draft, which the visitor must send. GitHub Pages does not run a contact inbox. Keep passwords, private enquiries, databases, and confidential drafts outside this public repository.
+
+The supplied github.io address is free. A separately owned custom domain is optional and would require obtaining that domain.
