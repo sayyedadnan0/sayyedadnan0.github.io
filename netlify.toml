@@ -1,0 +1,10 @@
+[build]
+  command = "npm run build:netlify"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "24"
+  NPM_FLAGS = "--include=dev"
+
+[functions]
+  included_files = ["src/generated/cloud/**"]

@@ -32,10 +32,11 @@ function run(args) {
 async function main() {
   const dataRoot = path.resolve(process.env.PORTFOLIO_DATA_DIR || '/var/data');
   const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl?.startsWith('file:')) throw new Error('Set DATABASE_URL to the SQLite file on the persistent disk.');
-  const databaseFile = path.resolve(decodeURIComponent(databaseUrl.slice(5).split('?')[0]));
+  const cloudDatabase = /^postgres(?:ql)?:/.test(databaseUrl || '');
+  if (!cloudDatabase && !databaseUrl?.startsWith('file:')) throw new Error('Configure a persistent SQLite or PostgreSQL DATABASE_URL.');
+  const databaseFile = cloudDatabase ? null : path.resolve(decodeURIComponent(databaseUrl.slice(5).split('?')[0]));
   const uploadRoot = path.resolve(process.env.UPLOAD_DIR || path.join(dataRoot, 'uploads'));
-  for (const file of [databaseFile, uploadRoot]) {
+  for (const file of [databaseFile, uploadRoot].filter(Boolean)) {
     const relative = path.relative(dataRoot, file);
     if (!relative || relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) throw new Error('Database and uploads must be inside PORTFOLIO_DATA_DIR.');
   }
@@ -47,12 +48,14 @@ async function main() {
   const port = Number(process.env.PORT || '10000');
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('PORT must be a valid port number.');
   process.env.UPLOAD_DIR = uploadRoot;
-  await fs.mkdir(path.dirname(databaseFile), { recursive: true });
   await fs.mkdir(uploadRoot, { recursive: true });
-  await (await fs.open(databaseFile, 'a')).close();
+  if (databaseFile) {
+    await fs.mkdir(path.dirname(databaseFile), { recursive: true });
+    await (await fs.open(databaseFile, 'a')).close();
+  }
 
   // The disk exists at runtime, not during Render's build or pre-deploy steps.
-  await run([require.resolve('prisma/build/index.js'), 'migrate', 'deploy']);
+  await run([require.resolve('prisma/build/index.js'), 'migrate', 'deploy', '--schema', cloudDatabase ? 'prisma/postgres/schema.prisma' : 'prisma/schema.prisma']);
   await run([require.resolve('ts-node/dist/bin.js'), '--project', 'prisma/tsconfig.json', 'prisma/seed.ts']);
   await run([require.resolve('ts-node/dist/bin.js'), '--project', 'prisma/tsconfig.json', 'prisma/seed-portfolio.ts']);
   await run(['scripts/deploy/seed-media.mjs']);

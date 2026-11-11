@@ -7,11 +7,11 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "db:generate": "prisma generate",
+    "db:generate": "node scripts/generate-clients.mjs",
     "db:push": "node scripts/db-push.mjs",
     "db:seed": "ts-node --project prisma/tsconfig.json prisma/seed.ts",
     "db:studio": "prisma studio",
-    "postinstall": "prisma generate",
+    "postinstall": "node scripts/generate-clients.mjs",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "node --experimental-strip-types --test tests/unit/*.test.mjs",
     "test:smoke": "node scripts/smoke.mjs",
@@ -20,7 +20,8 @@
     "deploy:start": "node scripts/deploy/start.mjs",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:seed:media": "node scripts/deploy/seed-media.mjs",
-    "test:deployment": "node scripts/deploy/verify-persistence.mjs"
+    "test:deployment": "node scripts/deploy/verify-persistence.mjs",
+    "build:netlify": "node scripts/deploy/netlify-build.mjs"
   },
   "prisma": {
     "seed": "ts-node --project prisma/tsconfig.json prisma/seed.ts"
@@ -31,6 +32,7 @@
     "@react-three/drei": "^10.7.9",
     "@react-three/fiber": "^9.8.1",
     "@studio-freight/lenis": "^1.0.42",
+    "@supabase/supabase-js": "2.119.0",
     "@tiptap/extension-image": "^3.31.4",
     "@tiptap/extension-link": "^3.31.4",
     "@tiptap/pm": "^3.31.4",

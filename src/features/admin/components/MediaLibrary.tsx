@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
+import { uploadMedia } from '../upload-media'
 
 export interface MediaAsset {
   id: string
@@ -109,20 +110,7 @@ export default function MediaLibrary({
       let uploadedCount = 0
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
-        const formData = new FormData()
-        formData.append('file', file)
-        formData.append('folder', folderToUse)
-        formData.append('alt', file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' '))
-
-        const res = await fetch('/api/admin/media', {
-          method: 'POST',
-          body: formData,
-        })
-
-        if (!res.ok) {
-          const err = await res.json()
-          throw new Error(err.error || `Failed to upload ${file.name}`)
-        }
+        await uploadMedia(file, { folder: folderToUse, alt: file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ') })
         uploadedCount++
       }
 
@@ -142,20 +130,7 @@ export default function MediaLibrary({
 
     setUploading(true)
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const res = await fetch(`/api/admin/media/${replacingAssetId}`, {
-        method: 'PUT',
-        body: formData,
-      })
-
-      if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.error || 'Failed to replace file')
-      }
-
-      const updated = await res.json()
+      const updated = await uploadMedia(file, { replaceId: replacingAssetId })
       showNotify('File replaced successfully')
       setSelectedAsset(updated)
       await loadMedia()

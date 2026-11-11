@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { SITE } from '@/config/site'
 import { isPublicSite, resolveSiteUrl } from '@/lib/url'
 
-export const siteUrl = resolveSiteUrl(process.env.NEXT_PUBLIC_SITE_URL || process.env.RENDER_EXTERNAL_URL)
+export const siteUrl = resolveSiteUrl(process.env.NEXT_PUBLIC_SITE_URL || process.env.URL || process.env.RENDER_EXTERNAL_URL)
 export const siteIndexable = isPublicSite(siteUrl, process.env.SITE_INDEXABLE)
 
 export function absoluteUrl(path: string): string {

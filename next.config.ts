@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     // For server components
   },
   images: {
-    remotePatterns: [],
+    remotePatterns: process.env.SUPABASE_URL ? [{ protocol: 'https', hostname: new URL(process.env.SUPABASE_URL).hostname, pathname: '/storage/v1/object/public/portfolio-media/**' }] : [],
     formats: ['image/avif', 'image/webp'],
   },
   // For Three.js and WebGL

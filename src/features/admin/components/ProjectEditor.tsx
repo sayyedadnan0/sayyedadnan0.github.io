@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import MediaPickerDialog from './MediaPickerDialog'
 import type { MediaAsset } from './MediaLibrary'
+import { uploadMedia } from '../upload-media'
 
 interface Category {
   id: string
@@ -139,13 +140,7 @@ export default function ProjectEditor({ project, categories }: Props) {
     setUploadingTarget(targetField)
     setError('')
     try {
-      const data = new FormData()
-      data.append('file', file)
-      data.append('folder', 'projects')
-
-      const res = await fetch('/api/admin/media', { method: 'POST', body: data })
-      const result = await res.json()
-      if (!res.ok) throw new Error(result.error || 'Upload failed')
+      const result = await uploadMedia(file, { folder: 'projects' })
 
       if (targetField === 'gallery_add') {
         setGallery((prev) => [

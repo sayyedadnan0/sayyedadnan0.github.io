@@ -1,9 +1,9 @@
-import { PrismaClient } from '@prisma/client'
+import { createDatabaseClient } from './client'
 import { loadEnvConfig } from '@next/env'
 import catalog from './data/portfolio.json'
 
 loadEnvConfig(process.cwd())
-const prisma = new PrismaClient()
+const prisma = createDatabaseClient()
 
 async function main() {
   if (await prisma.project.count()) {

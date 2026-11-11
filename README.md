@@ -57,9 +57,9 @@ The smoke command defaults to http://127.0.0.1:3000. Set PORTFOLIO_TEST_URL to c
 
 ## SEO and deployment
 
-Set NEXT_PUBLIC_SITE_URL to your actual HTTPS origin before building. Set SITE_INDEXABLE=true only when the public website is ready. Local previews remain noindex. Render can supply its generated HTTPS origin automatically. Canonical URLs, page-specific Open Graph/Twitter metadata, JSON-LD, robots.txt, and a dynamic published-project sitemap use the same origin configuration. Admin routes stay noindex.
+The free deployment uses Netlify for the website and Supabase for PostgreSQL and media storage. Netlify supplies its HTTPS origin automatically; set NEXT_PUBLIC_SITE_URL when adding a custom domain. Set SITE_INDEXABLE=true only when launching publicly. Local previews remain noindex. Canonical URLs, page-specific Open Graph/Twitter metadata, JSON-LD, robots.txt, and a dynamic published-project sitemap use the same origin configuration. Admin routes stay noindex.
 
-See [deployment notes](docs/deployment.md), [architecture](docs/architecture.md), and [CMS guide](docs/cms.md). The included Render Blueprint configures a persistent SQLite database and upload directory, with startup migrations and a streaming upload route. The current site does not send email notifications: enquiries are saved to the CMS inbox.
+See [deployment notes](docs/deployment.md), [architecture](docs/architecture.md), and [CMS guide](docs/cms.md). netlify.toml selects the free-cloud build. Your local database remains SQLite; both clients are generated from the canonical data model. CMS files upload directly to durable cloud storage and stay available across redeployments. The current site does not send email notifications: enquiries are saved to the CMS inbox. Free-plan quotas and inactivity pausing apply.
 
 ## Repository hygiene
 

@@ -17,11 +17,17 @@ await new Promise(resolve => listener.close(resolve));
 const origin = `http://127.0.0.1:${port}`;
 const password = randomBytes(24).toString('base64url');
 const email = 'deployment-check@example.invalid';
+const postgres = process.env.PORTFOLIO_TEST_POSTGRES_URL;
+if (postgres) {
+  const target = new URL(postgres);
+  if (!['localhost', '127.0.0.1'].includes(target.hostname) || target.pathname !== '/portfolio_ci') throw new Error('Postgres checks require the dedicated loopback portfolio_ci test database.');
+}
 const environment = {
   ...process.env, NODE_ENV: 'production', PORT: String(port), HOST: '127.0.0.1',
-  PORTFOLIO_DATA_DIR: dataRoot, DATABASE_URL: `file:${path.join(dataRoot, 'portfolio.db').replaceAll('\\', '/')}`,
+  PORTFOLIO_DATA_DIR: dataRoot, DATABASE_URL: postgres || `file:${path.join(dataRoot, 'portfolio.db').replaceAll('\\', '/')}`,
   UPLOAD_DIR: path.join(dataRoot, 'uploads'), ADMIN_EMAIL: email, ADMIN_PASSWORD: password,
   JWT_SECRET: randomBytes(32).toString('hex'), NEXT_PUBLIC_SITE_URL: origin, SITE_INDEXABLE: 'false',
+  STORAGE_PROVIDER: 'local', ...(postgres ? { DIRECT_URL: postgres } : {}),
 };
 let server;
 let output = '';
@@ -56,8 +62,12 @@ async function login() {
 try {
   await start();
   let cookie = await login();
+  assert.equal((await fetch(origin + '/api/admin/media/upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })).status, 401);
   const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aWQ0AAAAASUVORK5CYII=', 'base64');
   const form = new FormData();
+  const prepared = await fetch(origin + '/api/admin/media/upload', { method: 'POST', headers: { Cookie: cookie, 'Content-Type': 'application/json' }, body: JSON.stringify({ name: 'check.png', mimeType: 'image/png', size: png.length }) });
+  assert.equal(prepared.status, 200);
+  assert.equal((await prepared.json()).mode, 'local');
   form.set('file', new Blob([png], { type: 'image/png' }), 'deployment-storage-check.png');
   form.set('folder', 'deployment-check');
   const upload = await fetch(origin + '/api/admin/media', { method: 'POST', headers: { Cookie: cookie }, body: form });

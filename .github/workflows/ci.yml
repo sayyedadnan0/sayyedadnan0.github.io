@@ -26,3 +26,33 @@ jobs:
       - run: npm run build
       - run: npm audit --omit=dev --audit-level=high
       - run: npm run test:deployment
+
+  cloud-database:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: portfolio
+          POSTGRES_PASSWORD: isolated-ci-only
+          POSTGRES_DB: portfolio_ci
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: file:./ci.db
+      PORTFOLIO_TEST_POSTGRES_URL: postgresql://portfolio:isolated-ci-only@127.0.0.1:5432/portfolio_ci
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      SITE_INDEXABLE: 'false'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test:deployment

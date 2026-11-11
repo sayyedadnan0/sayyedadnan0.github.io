@@ -3,6 +3,7 @@ import fs from 'fs/promises'
 import { v4 as uuidv4 } from 'uuid'
 import sharp from 'sharp'
 import { getUploadRoot, getUploadedFile, isWithinDirectory } from './upload-files'
+import { cloudStorageEnabled, cloudBucket, cloudObjectPath } from './supabase-storage'
 
 export interface UploadResult {
   url: string
@@ -75,6 +76,8 @@ export async function saveLocalFile(
     throw new Error(`File extension ${ext} is not allowed`)
   }
 
+  if (cloudStorageEnabled()) throw new Error('Use the signed upload flow for cloud media.')
+
   const uploadsRoot = getUploadRoot()
   const targetDir = path.resolve(uploadsRoot, cleanFolder)
 
@@ -123,6 +126,13 @@ export async function saveLocalFile(
 }
 
 export async function deleteLocalFile(url: string): Promise<void> {
+  if (cloudStorageEnabled()) {
+    const key = cloudObjectPath(url)
+    if (!key) return
+    const { error } = await cloudBucket().remove([key])
+    if (error) throw new Error('Could not remove the stored media file.')
+    return
+  }
   if (!url || typeof url !== 'string' || !url.startsWith('/uploads/')) return
   const file = await getUploadedFile(url.slice('/uploads/'.length).split('/'))
   if (!file) return

@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require(/^postgres(?:ql)?:/.test(process.env.DATABASE_URL || '') ? '../../src/generated/cloud' : '@prisma/client');
 const prisma = new PrismaClient();
 
 try {

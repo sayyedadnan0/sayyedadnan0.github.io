@@ -1,9 +1,9 @@
-import { PrismaClient } from '@prisma/client'
+import { createDatabaseClient } from './client'
 import bcrypt from 'bcryptjs'
 import { loadEnvConfig } from '@next/env'
 
 loadEnvConfig(process.cwd())
-const prisma = new PrismaClient()
+const prisma = createDatabaseClient()
 
 async function main() {
   const email = process.env.ADMIN_EMAIL?.trim().toLowerCase()
