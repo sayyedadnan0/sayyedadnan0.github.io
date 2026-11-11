@@ -6,6 +6,7 @@ import { randomBytes, createHash } from 'node:crypto';
 import { fork } from 'node:child_process';
 import { once } from 'node:events';
 import assert from 'node:assert/strict';
+import jwt from 'jsonwebtoken';
 import { setTimeout as delay } from 'node:timers/promises';
 
 const dataRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'adnan-deploy-check-'));
@@ -62,6 +63,8 @@ async function login() {
 try {
   await start();
   let cookie = await login();
+  const scopedTicket = jwt.sign({ userId: 'scoped-upload', email, role: 'admin' }, environment.JWT_SECRET, { audience: 'portfolio-media-upload' });
+  assert.equal((await fetch(origin + '/api/admin/me', { headers: { Cookie: `adnan_admin_session=${scopedTicket}` } })).status, 401, 'An upload ticket must not authorize CMS access');
   assert.equal((await fetch(origin + '/api/admin/media/upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })).status, 401);
   const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aWQ0AAAAASUVORK5CYII=', 'base64');
   const form = new FormData();

@@ -47,7 +47,10 @@ export function generateToken(user: AdminUser): string {
 
 export function verifyToken(token: string): JWTPayload | null {
   try {
-    return jwt.verify(token, getJwtSecret()) as JWTPayload
+    const payload = jwt.verify(token, getJwtSecret())
+    // A scoped upload ticket must never be accepted as a full CMS session.
+    if (typeof payload === 'string' || payload.aud || typeof payload.userId !== 'string' || typeof payload.email !== 'string' || typeof payload.role !== 'string') return null
+    return payload as JWTPayload
   } catch {
     return null
   }
