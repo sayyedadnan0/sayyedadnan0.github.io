@@ -1,9 +1,11 @@
 import { notFound } from 'next/navigation'
 import ProjectDetail from '@/features/work/components/ProjectDetail'
 import StructuredData from '@/components/seo/StructuredData'
-import { getPublishedProject, getAdjacentProjects } from '@/server/queries/projects'
+import { getPublishedProject, getAdjacentProjects, getPublishedProjects } from '@/server/queries/projects'
 import { absoluteUrl, createPageMetadata } from '@/server/seo'
 import { SITE } from '@/config/site'
+
+export async function generateStaticParams() { return (await getPublishedProjects()).map(project => ({slug:project.slug})) }
 
 interface Props { params: Promise<{ slug: string }> }
 

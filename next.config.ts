@@ -2,12 +2,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   turbopack: {},
+  ...(process.env.STATIC_EXPORT === 'true' ? { output: 'export' as const, trailingSlash: true } : {}),
   poweredByHeader: false,
   // Enable experimental features
   experimental: {
     // For server components
   },
   images: {
+    unoptimized: process.env.STATIC_EXPORT === 'true',
     remotePatterns: process.env.SUPABASE_URL ? [{ protocol: 'https', hostname: new URL(process.env.SUPABASE_URL).hostname, pathname: '/storage/v1/object/public/portfolio-media/**' }] : [],
     formats: ['image/avif', 'image/webp'],
   },
@@ -30,6 +32,7 @@ const nextConfig: NextConfig = {
   },
   // Headers for security
   async headers() {
+    if (process.env.STATIC_EXPORT === 'true') return []
     return [
       {
         source: '/admin/:path*',

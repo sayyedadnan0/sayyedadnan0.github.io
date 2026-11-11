@@ -1,3 +1,7 @@
+# Live GitHub Pages portfolio
+
+The public site is published at https://sayyedadnan0.github.io/ from versioned content. See [content editing guide](docs/github-content-guide.md). The GitHub Pages build uses no online database, Supabase, or Netlify. The server-backed CMS below is retained for local use and is not the published content manager.
+
 # ADNAN portfolio
 
 A Next.js portfolio and private CMS for Sayyed Adnan Ali. The homepage uses Three.js; public project pages, About, Contact, and the CMS use server-rendered routes and reusable React components.

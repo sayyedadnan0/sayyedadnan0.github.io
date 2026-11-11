@@ -21,7 +21,8 @@
     "db:migrate:deploy": "prisma migrate deploy",
     "db:seed:media": "node scripts/deploy/seed-media.mjs",
     "test:deployment": "node scripts/deploy/verify-persistence.mjs",
-    "build:netlify": "node scripts/deploy/netlify-build.mjs"
+    "build:netlify": "node scripts/deploy/netlify-build.mjs",
+    "build:pages": "node scripts/deploy/build-pages.mjs"
   },
   "prisma": {
     "seed": "ts-node --project prisma/tsconfig.json prisma/seed.ts"

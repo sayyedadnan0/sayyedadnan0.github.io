@@ -78,3 +78,6 @@ yarn-error.log*
 # Provider-specific clients are generated from the canonical data model
 /src/generated/
 /prisma/postgres/schema.prisma
+
+# Verified static GitHub Pages build
+/out-pages/

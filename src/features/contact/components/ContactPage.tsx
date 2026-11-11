@@ -37,6 +37,11 @@ export default function ContactPage({ settings, socials }: { settings: Record<st
     if (status === 'loading') return
     const validated = validateContact(form)
     if (!validated.ok) { setError(validated.error); setStatus('error'); return }
+    if (process.env.NEXT_PUBLIC_STATIC_SITE === 'true') {
+      const body = `From: ${validated.data.name} <${validated.data.email}>\n\n${validated.data.message}`
+      window.location.href = `mailto:${email}?subject=${encodeURIComponent(validated.data.subject || 'Portfolio enquiry')}&body=${encodeURIComponent(body)}`
+      setStatus('success'); return
+    }
     setStatus('loading'); setError('')
     try {
       const response = await fetch('/api/contact', {
@@ -62,7 +67,7 @@ export default function ContactPage({ settings, socials }: { settings: Record<st
         <div className="contact-socials">{socials.map(social => <a key={social.platform} href={social.url} target="_blank" rel="noopener noreferrer">{social.label || social.platform} <ArrowUpRight aria-hidden="true" size={12} style={{ display: 'inline' }} /></a>)}</div>
       </section>
       <section className="contact-form-panel" aria-label="Project enquiry">
-        {status === 'success' ? <div className="contact-success" ref={successRef} tabIndex={-1} role="status" aria-live="polite"><Check aria-hidden="true" /><h2>Message received.</h2><p>Thank you for getting in touch. Your enquiry has been saved, and I’ll get back to you using the email you provided.</p><button className="page-button" onClick={() => setStatus('idle')}>Send another message <ArrowRight aria-hidden="true" /></button></div> : <>
+        {status === 'success' ? <div className="contact-success" ref={successRef} tabIndex={-1} role="status" aria-live="polite"><Check aria-hidden="true" /><h2>{process.env.NEXT_PUBLIC_STATIC_SITE === 'true' ? 'Email draft opened.' : 'Message received.'}</h2><p>{process.env.NEXT_PUBLIC_STATIC_SITE === 'true' ? 'Please send the draft from your email app. If it did not open, use the email address shown on this page. Your message has not been sent automatically.' : 'Thank you for getting in touch. Your enquiry has been saved, and I’ll get back to you using the email you provided.'}</p><button className="page-button" onClick={() => setStatus('idle')}>Send another message <ArrowRight aria-hidden="true" /></button></div> : <>
           <h2>Tell me about your idea.</h2><p>A few details about the project, your timeline, and what you have in mind are a good place to start.</p>
           <form className="contact-form" onSubmit={submit} aria-busy={status === 'loading'}>
             <fieldset disabled={status === 'loading'}>
@@ -75,7 +80,7 @@ export default function ContactPage({ settings, socials }: { settings: Record<st
               <div className="contact-field"><label htmlFor="contact-message">A little more detail *</label><textarea id="contact-message" name="message" required minLength={10} maxLength={5000} rows={5} placeholder="The idea, the timeline, the possibilities…" value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} /></div>
               <div className="contact-honeypot" aria-hidden="true"><label htmlFor="contact-website">Leave this blank</label><input id="contact-website" name="website" tabIndex={-1} autoComplete="off" value={website} onChange={e => setWebsite(e.target.value)} /></div>
               {error && <p className="contact-error" ref={errorRef} tabIndex={-1} role="alert">{error}</p>}
-              <button className="page-button page-button-primary" type="submit" disabled={status === 'loading'}>{status === 'loading' ? 'Sending your message…' : 'Send message'}<ArrowUpRight aria-hidden="true" /></button>
+              <button className="page-button page-button-primary" type="submit" disabled={status === 'loading'}>{status === 'loading' ? 'Sending your message…' : (process.env.NEXT_PUBLIC_STATIC_SITE === 'true' ? 'Open email draft' : 'Send message')}<ArrowUpRight aria-hidden="true" /></button>
             </fieldset>
           </form>
         </>}
