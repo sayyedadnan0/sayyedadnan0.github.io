@@ -1,6 +1,7 @@
 import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { createClient } from '@supabase/supabase-js';
+import { resolveDatabaseUrl } from '../../prisma/database-url.cjs';
 
 const require = createRequire(import.meta.url);
 const env = process.env;
@@ -10,6 +11,8 @@ function run(args) {
 }
 
 try {
+  env.DATABASE_URL = resolveDatabaseUrl(env.DATABASE_URL, env.DATABASE_PASSWORD);
+  env.DIRECT_URL = resolveDatabaseUrl(env.DIRECT_URL, env.DATABASE_PASSWORD);
   if (!/^postgres(?:ql)?:/.test(env.DATABASE_URL || '') || !/^postgres(?:ql)?:/.test(env.DIRECT_URL || '')) throw new Error('Configure the Supabase pooled DATABASE_URL and session DIRECT_URL privately in Netlify.');
   if (env.STORAGE_PROVIDER !== 'supabase' || !env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) throw new Error('Configure Supabase media storage privately in Netlify.');
   const storageOrigin = new URL(env.SUPABASE_URL);

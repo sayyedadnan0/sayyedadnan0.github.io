@@ -29,6 +29,8 @@ Keep long films embedded from the existing Drive/Adobe sources. CMS direct uploa
 | SITE_INDEXABLE | true when launching publicly |
 | MAX_FILE_SIZE | 50000000 |
 
+Optionally leave [YOUR-PASSWORD] in both pooled connection URLs and set DATABASE_PASSWORD privately. The build and server encode that password safely; never put this variable in public configuration. Fully encoded connection URLs continue to work without the extra variable.
+
 URL is supplied by Netlify and sets canonical URLs. When adding a custom domain later, configure NEXT_PUBLIC_SITE_URL to its HTTPS origin and rebuild. Never use the local .env DATABASE_URL online.
 
 ## Deployment and CMS
