@@ -1,4 +1,5 @@
 import pg from 'pg';
+import supabaseCa from '../../prisma/supabase-ca.cjs';
 
 /** Read-only deployment preflight. Never include a credential or raw driver message in logs. */
 export async function checkDatabaseConnection(connectionString) {
@@ -7,7 +8,7 @@ export async function checkDatabaseConnection(connectionString) {
     host: url.hostname, port: Number(url.port || 5432),
     user: decodeURIComponent(url.username), password: decodeURIComponent(url.password),
     database: decodeURIComponent(url.pathname.slice(1)),
-    ssl: { rejectUnauthorized: true }, connectionTimeoutMillis: 30000, query_timeout: 30000,
+    ssl: { rejectUnauthorized: true, ...(url.hostname.endsWith('.pooler.supabase.com') || url.hostname.endsWith('.supabase.co') ? { ca: supabaseCa } : {}) }, connectionTimeoutMillis: 30000, query_timeout: 30000,
   });
   try {
     await client.connect();
