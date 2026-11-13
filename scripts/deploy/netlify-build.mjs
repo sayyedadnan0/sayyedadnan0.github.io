@@ -2,6 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { createClient } from '@supabase/supabase-js';
 import { resolveDatabaseUrl } from '../../prisma/database-url.cjs';
+import { checkDatabaseConnection } from './database-preflight.mjs';
 
 const require = createRequire(import.meta.url);
 const env = process.env;
@@ -23,6 +24,7 @@ try {
   if (!origin || !origin.startsWith('https://')) throw new Error('Netlify must supply the public HTTPS URL.');
   // Previews must have their own database rather than migrating the live CMS.
   if (env.CONTEXT && env.CONTEXT !== 'production') throw new Error('Disable automatic deploy previews or configure a separate preview database before building previews.');
+  await checkDatabaseConnection(env.DIRECT_URL);
   run(['scripts/generate-clients.mjs']);
   run([require.resolve('prisma/build/index.js'), 'migrate', 'deploy', '--schema', 'prisma/postgres/schema.prisma']);
   run([require.resolve('ts-node/dist/bin.js'), '--project', 'prisma/tsconfig.json', 'prisma/seed.ts']);
@@ -39,3 +41,4 @@ try {
   } else if (!existing.data.public) throw new Error('The portfolio media bucket must be public. Use a separate bucket for private documents.');
   run([require.resolve('next/dist/bin/next'), 'build', '--webpack']);
 } catch (error) { console.error(error.message); process.exitCode = 1; }
+
