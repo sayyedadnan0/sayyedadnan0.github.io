@@ -25,6 +25,8 @@ function resolveDatabaseUrl(value, password) {
   const url = new URL(resolved);
   const supabase = url.hostname.endsWith('.pooler.supabase.com') || (url.hostname.startsWith('db.') && url.hostname.endsWith('.supabase.co'));
   if (!template && !supabase) return value;
+  // The dedicated password field is authoritative for Supabase, including URLs saved before a password reset.
+  if (supabase && password) url.password = encodeURIComponent(password);
   if (!url.searchParams.has('connect_timeout')) url.searchParams.set('connect_timeout', '30');
   if (supabase) {
     url.searchParams.set('sslmode', 'require');

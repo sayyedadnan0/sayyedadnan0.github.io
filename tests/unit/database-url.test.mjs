@@ -30,3 +30,13 @@ test('Supabase connections verify their CA without disabling certificate checks'
   assert.equal(certificate.ca, true);
   assert.equal(certificate.fingerprint256, '80:70:25:AD:50:D4:ED:21:9D:2C:9C:7D:29:9C:00:4F:82:4E:B0:0C:F7:F6:5A:FE:F6:07:D0:7B:72:E6:CA:FA');
 });
+
+test('a rotated Supabase password overrides a stale password embedded in either pooler URL', () => {
+  for (const port of [5432, 6543]) {
+    const url = new URL(resolveDatabaseUrl('postgresql://postgres.project:old-password@aws-1-ap-south-1.pooler.supabase.com:' + port + '/postgres?sslmode=require', 'updated@password#with%symbols'));
+    assert.equal(decodeURIComponent(url.password), 'updated@password#with%symbols');
+    assert.equal(url.port, String(port));
+    assert.equal(url.username, 'postgres.project');
+    assert.equal(url.searchParams.get('sslaccept'), 'strict');
+  }
+});
