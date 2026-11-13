@@ -8,7 +8,8 @@ test('database password symbols remain inside the password part of a connection 
   const parsed = new URL(result);
   assert.equal(parsed.hostname, 'db.example');
   assert.equal(decodeURIComponent(parsed.password), password);
-  assert.equal(parsed.search, '?sslmode=require');
+  assert.equal(parsed.searchParams.get('sslmode'), 'require');
+  assert.equal(parsed.searchParams.get('connect_timeout'), '30');
 });
 test('existing configured URLs and local SQLite keep their values', () => {
   for (const value of [undefined, 'file:./local.db', 'postgresql://user:already%40encoded@db.example/postgres']) {
