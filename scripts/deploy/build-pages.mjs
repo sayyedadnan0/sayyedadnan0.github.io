@@ -15,7 +15,7 @@ await fs.mkdir(path.join(temp,'src/app/admin/login'),{recursive:true});
 const adminPage = "export const metadata = { robots: { index: false, follow: false } }\nexport { default } from '@/features/admin/components/GitContentAdmin'\n";
 await fs.writeFile(path.join(temp,'src/app/admin/page.tsx'),adminPage);
 await fs.writeFile(path.join(temp,'src/app/admin/login/page.tsx'),adminPage);
-const env={...process.env,STATIC_EXPORT:'true',PORTFOLIO_CONTENT_MODE:'git',NEXT_PUBLIC_STATIC_SITE:'true',NEXT_PUBLIC_SITE_URL:'https://sayyedadnan0.github.io',SITE_INDEXABLE:'true',DATABASE_URL:'file:./unused-pages.db'};
+const env={...process.env,STATIC_EXPORT:'true',PORTFOLIO_CONTENT_MODE:'git',NEXT_PUBLIC_STATIC_SITE:'true',NEXT_PUBLIC_SITE_URL:'https://sayyedadnanali.com',SITE_INDEXABLE:'true',DATABASE_URL:'file:./unused-pages.db'};
 const result=spawnSync(process.execPath,[path.join(root,'node_modules/next/dist/bin/next'),'build','--webpack'],{cwd:temp,env,stdio:'inherit'});
 if(result.status!==0)throw new Error('Static build failed; review '+temp);
 const output=path.resolve(root,'out-pages');

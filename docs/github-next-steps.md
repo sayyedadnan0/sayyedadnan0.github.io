@@ -1,7 +1,7 @@
 # GitHub website: completed setup
 
-Website: https://sayyedadnan0.github.io/
-Content manager: https://sayyedadnan0.github.io/admin/
+Website: https://sayyedadnanali.com/
+Content manager: https://sayyedadnanali.com/admin/
 Source: https://github.com/sayyedadnan0/sayyedadnan0.github.io
 
 The repository is public, GitHub Pages is enabled, and the public build reads versioned portfolio content without an online database. Netlify and Supabase are not required for this deployment. The original server-backed CMS remains in the repository for local/alternative server use.

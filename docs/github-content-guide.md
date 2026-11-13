@@ -1,7 +1,7 @@
 # GitHub content manager
 
-Website: https://sayyedadnan0.github.io/
-Content manager: https://sayyedadnan0.github.io/admin/
+Website: https://sayyedadnanali.com/
+Content manager: https://sayyedadnanali.com/admin/
 
 Sign in to GitHub using the repository owner's account. No separate CMS credentials are required. The website's content manager links to GitHub's file editor and upload tools; it is not a visual form-based editor.
 
